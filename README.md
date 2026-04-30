@@ -1,15 +1,128 @@
-Bu projede dinamik yetkilendirme ve yapay zeka destekli dosya yönetimi odaklı bir admin panel sistemi geliştirdim. Projenin amacı; farklı kullanıcı gruplarının tek bir merkezi yapı üzerinden yönetilmesi, yetkilerinin dinamik olarak atanabilmesi ve yüklenen dosyaların yapay zeka ile analiz edilmesidir.
+# Dynamic Admin System
 
-Sistemde üç ana kullanıcı grubu bulunmaktadır: Admin, Teacher ve Student. Her rolün kendine özel paneli vardır ve kullanıcılar yalnızca kendilerine tanımlanan ekranlara erişebilmektedir. Admin tüm sistem üzerinde tam yetkiye sahiptir. Teacher kendi dosyaları ve öğrencilerin dosyaları üzerinde işlem yapabilirken, Student yalnızca kendi dosyalarını yönetebilmektedir.
+Dynamic Admin System, role-based access control mantığıyla çalışan, yapay zeka destekli dosya yönetimi ve analiz özelliklerine sahip bir yönetim paneli uygulamasıdır. Sistem; Admin, Teacher ve Student kullanıcı rollerine sahiptir ve Supervisor paneli üzerinden dinamik yetkilendirme yapılabilmektedir.
 
-Supervisor paneli üzerinden her role özel Create, Read, Update ve Delete yani CRUD yetkileri dinamik olarak atanabilmektedir. Örneğin öğretmenin öğrenci silme yetkisi kapatıldığında bu işlemi gerçekleştiremez. Aynı şekilde dosya görüntüleme, düzenleme ve yükleme işlemleri de yetki kontrolüne bağlıdır. Böylece sistem tamamen dinamik bir yetkilendirme yapısına sahip olmuştur.
+## Özellikler
 
-Dosya yönetimi kısmında kullanıcılar txt, docx ve izin verilen diğer formatlarda dosya yükleyebilmektedir. Bu yüklemeler role göre kısıtlanabilmektedir. TXT dosyaları Ollama üzerinde çalışan Mistral modeli ile analiz edilmekte ve yapay zeka sonucu kullanıcıya gösterilmektedir. Word yani DOCX dosyaları ise backend tarafında HTML formatına dönüştürülmekte ve GrapesJS editörü ile browser üzerinde görsel olarak düzenlenebilmektedir. Bu özellik, verilen ödev maddelerindeki yapay zeka analizi ve Word dosyasının HTML’e dönüştürülmesi şartını doğrudan karşılamaktadır.
+* Role-based access control (RBAC)
+* Dinamik CRUD yetkilendirme (Supervisor paneli üzerinden)
+* JWT Authentication ve route protection
+* Dosya yükleme ve rol bazlı dosya kısıtlama
+* TXT dosyaları için yapay zeka analizi (Ollama + Mistral)
+* DOCX dosyalarının HTML formatına dönüştürülmesi
+* GrapesJS ile görsel içerik düzenleme
+* Activity log sistemi
+* PostgreSQL, Redis ve RabbitMQ entegrasyonu
+* Docker ile container tabanlı çalışma
 
-Frontend tarafında Next.js ve TailwindCSS, backend tarafında ise FastAPI kullanılmıştır. JWT tabanlı authentication sistemi ile giriş kontrolü sağlanmış, route protection sayesinde kullanıcıların URL üzerinden yetkisiz sayfalara erişmesi engellenmiştir.
+## Kullanılan Teknolojiler
 
-Veritabanı olarak PostgreSQL, önbellekleme için Redis ve mesajlaşma yapısı için RabbitMQ kullanılmıştır. Tüm işlemler Docker üzerinde container yapısında çalışmaktadır.
+### Frontend
 
-Ayrıca kullanıcı oluşturma, silme, güncelleme, dosya işlemleri ve yetki değişiklikleri Activity Log sistemi ile kayıt altına alınmaktadır. PostgreSQL üzerinde Trigger, Procedure ve Function yapıları kullanılarak veritabanı seviyesinde otomatik loglama ve işlem kontrolü sağlanmıştır. JSONB kullanılarak activity log tablosunda dinamik veri saklama sistemi kurulmuştur.
+* Next.js
+* React
+* TailwindCSS
+* GrapesJS
 
-Sonuç olarak bu proje; role dayalı erişim kontrolü, dinamik CRUD yetkilendirme, yapay zeka destekli dosya analizi, dosya dönüşüm sistemleri, veritabanı trigger-procedure-function yapıları ve Docker tabanlı microservice yaklaşımını bir araya getiren kapsamlı ve profesyonel bir yönetim sistemi haline gelmiştir.
+### Backend
+
+* FastAPI
+* SQLAlchemy
+
+### Veritabanı ve Servisler
+
+* PostgreSQL
+* Redis
+* RabbitMQ
+
+### Diğer
+
+* Docker / Docker Compose
+* JWT Authentication
+* Ollama (Mistral modeli)
+
+## Kurulum
+
+Aşağıdaki adımları takip ederek projeyi sıfırdan çalıştırabilirsiniz.
+
+### 1. Repoyu klonlayın
+
+```bash
+git clone https://github.com/mermean/dynamic-admin-system.git
+cd dynamic-admin-system
+```
+
+### 2. Ortam değişkenlerini ayarlayın
+
+Backend klasörü içinde `.env` dosyası oluşturun ve aşağıdaki örneğe göre düzenleyin:
+
+```env
+DATABASE_URL=postgresql://USER:PASSWORD@postgres:5432/dynamic_admin_db
+REDIS_URL=redis://redis:6379
+RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672/
+SECRET_KEY=your_secret_key
+```
+
+### 3. Docker ile sistemi başlatın
+
+Proje root klasöründe aşağıdaki komutu çalıştırın:
+
+```bash
+docker compose up --build
+```
+
+Bu komut aşağıdaki servisleri başlatacaktır:
+
+* frontend (Next.js)
+* backend (FastAPI)
+* PostgreSQL
+* Redis
+* RabbitMQ
+
+### 4. Uygulamaya erişim
+
+Uygulama başlatıldıktan sonra:
+
+* Frontend: http://localhost:3000
+* Backend API: http://localhost:8000
+
+## Kullanım
+
+### Giriş
+
+Sisteme giriş yaptıktan sonra kullanıcı rolüne göre yönlendirme yapılır:
+
+* Admin → Admin Panel
+* Teacher → Teacher Panel
+* Student → Student Panel
+
+### Supervisor Panel
+
+Supervisor paneli üzerinden:
+
+* Rol bazlı yetkiler (Create, Read, Update, Delete) atanabilir
+* Sayfa ve işlem bazlı erişim kontrolü yapılabilir
+* Dosya yükleme izinleri kısıtlanabilir
+
+### Dosya Yönetimi
+
+* Kullanıcılar rolüne uygun dosyaları yükleyebilir
+* TXT dosyaları yapay zeka ile analiz edilir
+* DOCX dosyaları HTML'e dönüştürülerek düzenlenebilir
+* GrapesJS editörü ile içerik görsel olarak düzenlenebilir
+
+### Log Sistemi
+
+Tüm işlemler Activity Log tablosunda kayıt altına alınır. Ayrıca PostgreSQL Trigger yapısı ile veritabanı seviyesinde de otomatik loglama yapılmaktadır.
+
+## Veritabanı Özellikleri
+
+* PostgreSQL kullanılmıştır
+* Activity log tablosunda JSONB alanı ile dinamik veri saklanmaktadır
+* Trigger, Procedure ve Function yapıları entegre edilmiştir
+
+## Notlar
+
+* `uploaded_files` klasörü versiyon kontrolüne dahil edilmemelidir
+* `.env` dosyası GitHub’a yüklenmemelidir
+* Ollama servisinin sistemde çalışıyor olması gerekmektedir (AI analiz için)
